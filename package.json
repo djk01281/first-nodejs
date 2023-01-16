@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/djk01281/first-nodejs/issues"
   },
-  "homepage": "https://github.com/djk01281/first-nodejs#readme"
+  "homepage": "https://github.com/djk01281/first-nodejs#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.0"
+  }
 }
