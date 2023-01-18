@@ -1,5 +1,5 @@
 function matchURL(url){
-    const reg = /(?:\/(\w+))?(?:\/(\w+))?(?:\/(\w+))?(?:\/(\w+))?(?:\/(\w+))?/
+    const reg = /(?:\/(?<layer1>\w+))?(?:\/(?<layer2>\w+))?(?:\/(?<layer3>\w+))?(?:\?(?<key>\w+)=(?<value>\w+))?/
     
     return url.match(reg)
 }
