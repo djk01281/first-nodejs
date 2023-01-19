@@ -1,8 +1,6 @@
 const http = require('http')
-const fs = require('fs').promises
 const matchURL = require("./utils/matchURL")
-
-const html = fs.readFile(__dirname + "/index.html")
+const {getRandomImage} = require("./controllers/imageController")
 
 const hostname = '127.0.0.1'
 const port = 3001
@@ -10,7 +8,7 @@ const port = 3001
 const routeTable = {
     "images":{
         "random": {
-            "get": (value) => `This is a ${value}`
+            "get": getRandomImage
         }
     }
 }
@@ -34,14 +32,19 @@ const server = http.createServer(async (req, res) => {
     }
 
     let temp = routeTable
+    
+    console.log("---------")
+    console.log(layerList)
+ 
     for (const layer of layerList){
+        console.log(temp)
         temp = temp[layer]
+        console.log(temp)
     }
 
-    const result = temp[req.method.toLowerCase()](...Object.values(keyValue))
-    res.statusCode = 200
-    res.setHeader('Content-Type', 'application/json')
-    res.end(JSON.stringify({"result": result}))
+    const callback = temp[req.method.toLowerCase()]
+    callback(req, res, [...Object.values(keyValue)])
+
 })
 
 server.listen(port, hostname, () =>{
