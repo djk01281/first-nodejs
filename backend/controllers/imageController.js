@@ -1,4 +1,5 @@
 const {allIds, findById} = require('../models/imageModel')
+const fs = require('fs')
 
 async function getRandomImage(req, res, params){
     try{
@@ -7,8 +8,7 @@ async function getRandomImage(req, res, params){
         const randomId = ids[randomIndex]
 
         const image = await findById(params[0], randomId)
-
-        res.writeHead(200, {'Content-Type': 'application/json'})
+        res.writeHead(200, {'Content-Type': 'image/jpeg'})
         res.end(JSON.stringify(image))
     }
 

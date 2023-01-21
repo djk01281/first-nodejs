@@ -3,9 +3,12 @@ const Dogimages = require('../data/catImages.json')
 
 const Images = {"cat": Catimages, "dog": Dogimages}
 
+const fs = require('fs')
+
 const findById = (animal, id) => {
     return new Promise((resolve, reject) =>{
-        resolve(Images[animal][id])
+        fs.createReadStream(Catimages)
+        resolve(Catimages)
     })
 }
 
