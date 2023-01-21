@@ -1,0 +1,10 @@
+.description{
+    font-size: 20px;
+}
+
+.button{
+    width: 20px;
+    height: 10px;
+    border-radius: 2px;
+    background-color: #8EA7E9;
+}
