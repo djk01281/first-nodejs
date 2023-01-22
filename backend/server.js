@@ -16,10 +16,14 @@ const routeTable = {
 const server = http.createServer(async (req, res) => {
     const matchResult = matchURL(req.url)
     const groups = matchResult.groups
+    console.log(groups)
+
     const layerList = []
     const keyValue = {}
 
     const layers = ["layer1", "layer2", "layer3"]
+
+
     for (const layer of layers){
         if(groups[layer] !== undefined){
             layerList.push(groups[layer])

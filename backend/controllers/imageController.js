@@ -11,7 +11,7 @@ async function getRandomImage(req, res, params){
         const randomId = ids[randomIndex]
 
         console.log(`randomId: ${randomId}`)
-        await findById(params[0], randomId, (type, data) => {res.writeHead(200, {'Content-Type': type})
+        await findById(params[0], randomId, (type, data) => {res.writeHead(200, {'Content-Type': type, 'Cache-Control': 'no-store'})
         res.end(data)})
     }
 
