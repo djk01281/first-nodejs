@@ -1,28 +1,70 @@
 
 
 
-const setImageSrc = (img, url) => {
-	return new Promise((resolve, reject) =>
-	{
-    img.onload = resolve()
-	img.src = url
-	}
-	)
-} 
+// const setImageSrc = (img, url) => {
+// 	return new Promise((resolve, reject) =>
+// 	{
+//         img.onload = () => resolve()
+// 	    img.src = url
+//     })
+	
+// } 
 
-const handleClick = (element) => {
-    element.addEventListener('click',  async() => {
-        try{
-            const imageElement = document.querySelector('.img')
-            const animal = element.innerText
-            const url = `https://djk01281-upgraded-space-succotash-r59rjg7q6r2gqp-3001.preview.app.github.dev/images/random?animal=${animal}?timestamp=${new Date().getTime()}`
-            await setImageSrc(imageElement, url)
-        }
-        catch(err){throw err}
-    })
-}
+// const handleClick = (element) => {
+//     element.addEventListener('click',  () => {
+//         try{
+//             const imageContainer = document.querySelector('.img-container')
+//             imageContainer.innerHTML = ''
 
-let buttons = document.querySelectorAll(".button")
+//             const animal = element.innerText
+//             const url = `https://djk01281-upgraded-space-succotash-r59rjg7q6r2gqp-3001.preview.app.github.dev/images/random?animal=${animal}?timestamp=${new Date().getTime()}`
+//             const imageElement = document.createElement('img')
+//             setTimeout(() => {
+//                 imageElement.src = url
+//             }, 3000);
+//             imageContainer.appendChild(imageElement)
+//         }
+//         catch(err){throw err}
+//     })
+// }
 
-buttons.forEach((button) => {handleClick(button)})
+// let buttons = document.querySelectorAll(".button")
+
+// buttons.forEach((button) => {handleClick(button)})
+
+
+const output = document.querySelector(".output");
+const fileInput = document.querySelector(".input-file");
+const submitBtn = document.querySelector(".btn-submit");
+
+submitBtn.addEventListener("click", async () => {
+  const selectedFile = fileInput.files[0];
+  const imgAB = await selectedFile.arrayBuffer();
+  const fileName = selectedFile.name + new Date().getTime();
+  console.log(fileName);
+  const CHUNK_SIZE = 4000;
+  const chunkCount = Math.floor(imgAB.byteLength / CHUNK_SIZE) + 1;
+  console.log(chunkCount);
+  const ABs = [];
+  for (let chunkId = 0; chunkId < chunkCount; chunkId++) {
+    const chunk = imgAB.slice(chunkId * CHUNK_SIZE, (chunkId + 1) * CHUNK_SIZE);
+    console.log(`${chunkId}st chunk`);
+    ABs.push(chunk);
+
+    const response = await fetch("https://postman-echo.com/post", {
+      method: "POST",
+      body: chunk
+    });
+
+    console.log(await response.json());
+  }
+
+  const url = URL.createObjectURL(new Blob([...ABs]));
+  const imgElement = document.createElement("img");
+  imgElement.onload = () => {
+    output.appendChild(imgElement);
+  };
+  imgElement.src = url;
+});
+
 
