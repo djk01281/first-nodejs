@@ -57,7 +57,7 @@
 // })
 
 
-
+const fs = require('fs')
 const http = require('http');
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -65,7 +65,20 @@ const port = 3000;
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+  res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
+
+  if(req.method === 'POST'){
+    const fileName = req.headers['file-name']
+    req.on('data', chunk => {
+      fs.appendFileSync(fileName, chunk)
+    })
+  }
+
   res.end('Hellooo World');
+  console.log('response sent')
 });
 
 server.listen(port, hostname, () => {

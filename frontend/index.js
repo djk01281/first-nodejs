@@ -46,17 +46,23 @@ submitBtn.addEventListener("click", async () => {
   const chunkCount = Math.floor(imgAB.byteLength / CHUNK_SIZE) + 1;
   console.log(chunkCount);
   const ABs = [];
+  
+  const serverURL = 'https://djk01281-upgraded-space-succotash-r59rjg7q6r2gqp-3000.preview.app.github.dev'
   for (let chunkId = 0; chunkId < chunkCount; chunkId++) {
     const chunk = imgAB.slice(chunkId * CHUNK_SIZE, (chunkId + 1) * CHUNK_SIZE);
     console.log(`${chunkId}st chunk`);
     ABs.push(chunk);
-
-    const response = await fetch("https://postman-echo.com/post", {
-      method: "POST",
-      body: chunk
-    });
-
-    console.log(await response.json());
+    
+    await fetch(serverURL,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Content-Length': chunk.length,
+          'file-name': fileName
+        },
+        body: chunk
+      })
+    // const response = await fetch(URL);
   }
 
   const url = URL.createObjectURL(new Blob([...ABs]));
