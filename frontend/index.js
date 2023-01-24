@@ -57,7 +57,7 @@ submitBtn.addEventListener("click", async () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/octet-stream',
-          'Content-Length': chunk.length,
+          'Content-Length': chunk.byteLength,
           'file-name': fileName
         },
         body: chunk
