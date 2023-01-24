@@ -40,14 +40,14 @@ const submitBtn = document.querySelector(".btn-submit");
 submitBtn.addEventListener("click", async () => {
   const selectedFile = fileInput.files[0];
   const imgAB = await selectedFile.arrayBuffer();
-  const fileName = selectedFile.name + new Date().getTime();
+  const fileName =  new Date().getTime() + selectedFile.name;
   console.log(fileName);
   const CHUNK_SIZE = 4000;
   const chunkCount = Math.floor(imgAB.byteLength / CHUNK_SIZE) + 1;
   console.log(chunkCount);
   const ABs = [];
   
-  const serverURL = 'https://djk01281-upgraded-space-succotash-r59rjg7q6r2gqp-3000.preview.app.github.dev'
+  const serverURL = 'https://djk01281-upgraded-space-succotash-r59rjg7q6r2gqp-3001.preview.app.github.dev'
   for (let chunkId = 0; chunkId < chunkCount; chunkId++) {
     const chunk = imgAB.slice(chunkId * CHUNK_SIZE, (chunkId + 1) * CHUNK_SIZE);
     console.log(`${chunkId}st chunk`);
