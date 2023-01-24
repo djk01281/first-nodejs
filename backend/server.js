@@ -72,8 +72,10 @@ const server = http.createServer((req, res) => {
 
   if(req.method === 'POST'){
     const fileName = req.headers['file-name']
-    req.on('data', chunk => {
-      fs.appendFileSync(`${__dirname}/data/${fileName}`, chunk)
+    req.on('data', (chunk) => {
+      try{
+      fs.appendFileSync(`${__dirname}/data/${fileName}`, chunk)}
+      catch(e){console.log(e)}
     })
   }
 
