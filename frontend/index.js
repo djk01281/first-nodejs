@@ -68,7 +68,7 @@ submitBtn.addEventListener("click", async () => {
   })
   await Promise.all(requests)
   
-  const url = await fetch(serverURL,"/", fileName)
+  const url = await fetch(serverURL)
   // const url = URL.createObjectURL(new Blob([...ABs]));
   const imgElement = document.createElement("img");
   imgElement.onload = () => {

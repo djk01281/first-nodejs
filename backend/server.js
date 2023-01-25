@@ -61,9 +61,11 @@ const fs = require('fs')
 const http = require('http');
 const hostname = '127.0.0.1';
 const port = 3001;
+const { pipeline } = require('stream');
+const {promisify} = require('util')
 
 const server = http.createServer(async (req, res) => {
-
+  const pipelineAsync = promisify(pipeline)
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -73,26 +75,43 @@ const server = http.createServer(async (req, res) => {
   if(req.method === 'POST'){
     console.log('Request Received')
     const fileName = req.headers['file-name']
-    const fs = require('fs');
 
 if (!fs.existsSync(`${__dirname}/data/${fileName}`)) {
-    await fs.mkdirSync(`${__dirname}/data/${fileName}`);
+    fs.mkdirSync(`${__dirname}/data/${fileName}`);
+    console.log("made directory")
 }
-    await fs.writeFile(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`, '', () => {console.log('file created')})
-    const fileStream = fs.createWriteStream(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`)
-    req.pipe(fileStream)
-    req.on('end', () => {
-      res.end('Response Sent')
-    })
+    await fs.writeFileSync(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`, '')
+    const fileStream =  fs.createWriteStream(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`)
+    await pipelineAsync(req, fileStream) 
+    console.log('POST - Response Sent')
+    res.end('POST - Response Sent')
   }
-  else if(req.url === "/"){
-    res.end('Response Sent');
+  else if(req.url === '/'){
+    res.end('GET - Response Sent')
   }
   //final request
-  else{
-    const fineName = req.url.slice(1)
-    console.log(fileName)
+  else if (req.url.length > 7 ){
+    const readdirAsync = promisify(fs.readdir)
+    const fileName = req.url.slice(1)
+    console.log(`final, fileName: ${fileName}`)
+    fs.writeFileSync(`${__dirname}/data/img${fileName}`, '')
+    console.log('file created')
+    
+    const dir = await readdirAsync(`${__dirname}/data/${fileName}`)
+    dir.sort((a, b) => parseInt(a)-parseInt(b))
+    console.log(dir)
+    for await (const f of dir){
+      const readST =  await fs.createReadStream(`${__dirname}/data/${fileName}/${f}`)
+      const writeST =  await fs.createWriteStream(`${__dirname}/data/img${fileName}`)
+      await pipelineAsync(readST, writeST)
+      console.log('CHUNKING finished', f)
+    }
     res.end('https://upload.wikimedia.org/wikipedia/en/6/62/Kermit_the_Frog.jpg')
+
+
+
+    
+    //TODO: read one by one, and appendFileSync
     //gather files here
   }
 });
