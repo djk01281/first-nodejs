@@ -102,7 +102,7 @@ if (!fs.existsSync(`${__dirname}/data/${fileName}`)) {
     console.log(dir)
     for await (const f of dir){
       const readST =  await fs.createReadStream(`${__dirname}/data/${fileName}/${f}`)
-      const writeST =  await fs.createWriteStream(`${__dirname}/data/img${fileName}`)
+      const writeST =  await fs.createWriteStream(`${__dirname}/data/img${fileName}`,{flags: 'a'})
       await pipelineAsync(readST, writeST)
       console.log('CHUNKING finished', f)
     }
