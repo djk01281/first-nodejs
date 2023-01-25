@@ -70,18 +70,18 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
   res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
   if(req.method === 'POST'){
-    console.log('request received')
+    console.log('Request Received')
     const fileName = req.headers['file-name']
-
-    for await(const chunk of req){
-      console.log(chunk.byteLength)
-      fs.appendFileSync(`${__dirname}/data/${fileName}`, chunk)
-    }
+    const fileStream = fs.createWriteStream(`${__dirname}/data/${fileName}`, {flags: 'a'})
+    req.pipe(fileStream)
+    req.on('end', () => {
+      res.end('Response Sent')
+    })
   }
     
-
-  res.end('Hellooo World');
-  console.log('response sent')
+  else{
+  res.end('Response Sent');
+  }
 });
 
 server.listen(port, hostname, () => {
