@@ -66,7 +66,7 @@ submitBtn.addEventListener("click", async () => {
     })
     console.log(`${chunkId}st chunk`);
   })
-  const responses = await Promise.all(requests)
+  await Promise.all(requests)
   
   const url = await fetch(serverURL,"/", fileName)
   // const url = URL.createObjectURL(new Blob([...ABs]));

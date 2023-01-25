@@ -73,6 +73,12 @@ const server = http.createServer(async (req, res) => {
   if(req.method === 'POST'){
     console.log('Request Received')
     const fileName = req.headers['file-name']
+    const fs = require('fs');
+
+if (!fs.existsSync(`${__dirname}/data/${fileName}`)) {
+    await fs.mkdirSync(`${__dirname}/data/${fileName}`);
+}
+    await fs.writeFile(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`, '', () => {console.log('file created')})
     const fileStream = fs.createWriteStream(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`)
     req.pipe(fileStream)
     req.on('end', () => {
@@ -85,6 +91,7 @@ const server = http.createServer(async (req, res) => {
   //final request
   else{
     const fineName = req.url.slice(1)
+    console.log(fileName)
     res.end('https://upload.wikimedia.org/wikipedia/en/6/62/Kermit_the_Frog.jpg')
     //gather files here
   }
