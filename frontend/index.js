@@ -45,27 +45,31 @@ submitBtn.addEventListener("click", async () => {
   const CHUNK_SIZE = 4000;
   const chunkCount = Math.floor(imgAB.byteLength / CHUNK_SIZE) + 1;
   console.log(chunkCount);
-  const ABs = [];
   
   const serverURL = 'https://djk01281-upgraded-space-succotash-r59rjg7q6r2gqp-3001.preview.app.github.dev'
+  const chunks = []
   for (let chunkId = 0; chunkId < chunkCount; chunkId++) {
-    const chunk = imgAB.slice(chunkId * CHUNK_SIZE, (chunkId + 1) * CHUNK_SIZE);
-    console.log(`${chunkId}st chunk`);
-    ABs.push(chunk);
-    
-    await fetch(serverURL,{
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/octet-stream',
-          'Content-Length': chunk.byteLength,
-          'file-name': fileName
-        },
-        body: chunk
-      })
-    // const response = await fetch(URL);
+    // ;
+    chunks.push(chunkId)
   }
-
-  const url = URL.createObjectURL(new Blob([...ABs]));
+  const requests = chunks.map(async (chunkId) => {
+    const chunk = imgAB.slice(chunkId * CHUNK_SIZE, (chunkId + 1) * CHUNK_SIZE)
+    await fetch(serverURL,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'Content-Length': chunk.byteLength,
+        'file-name': fileName,
+        'chunk-id': chunkId
+      },
+      body: chunk
+    })
+    console.log(`${chunkId}st chunk`);
+  })
+  const responses = await Promise.all(requests)
+  
+  const url = await fetch(serverURL,"/", fileName)
+  // const url = URL.createObjectURL(new Blob([...ABs]));
   const imgElement = document.createElement("img");
   imgElement.onload = () => {
     output.appendChild(imgElement);
