@@ -63,6 +63,7 @@ const hostname = '127.0.0.1';
 const port = 3001;
 
 const server = http.createServer(async (req, res) => {
+
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -72,15 +73,20 @@ const server = http.createServer(async (req, res) => {
   if(req.method === 'POST'){
     console.log('Request Received')
     const fileName = req.headers['file-name']
-    const fileStream = fs.createWriteStream(`${__dirname}/data/${fileName}`, {flags: 'a'})
+    const fileStream = fs.createWriteStream(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`)
     req.pipe(fileStream)
     req.on('end', () => {
       res.end('Response Sent')
     })
   }
-    
+  else if(req.url === "/"){
+    res.end('Response Sent');
+  }
+  //final request
   else{
-  res.end('Response Sent');
+    const fineName = req.url.slice(1)
+    res.end('https://upload.wikimedia.org/wikipedia/en/6/62/Kermit_the_Frog.jpg')
+    //gather files here
   }
 });
 
