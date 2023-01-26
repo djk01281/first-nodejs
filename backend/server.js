@@ -73,16 +73,31 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
   res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
   if(req.method === 'POST'){
-    console.log('Request Received')
     const fileName = req.headers['file-name']
-
+    
 if (!fs.existsSync(`${__dirname}/data/${fileName}`)) {
     fs.mkdirSync(`${__dirname}/data/${fileName}`);
     console.log("made directory")
 }
     await fs.writeFileSync(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`, '')
     const fileStream =  fs.createWriteStream(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`)
+    let bytesReceived = 0
+    req.on('data', (data) => {
+      bytesReceived += Buffer.from(data).length
+    })
     await pipelineAsync(req, fileStream) 
+    
+    const bytesSent = parseInt(req.headers['content-length'])
+    console.log(`Bytes Sent: ${bytesSent}, Bytes Received: ${bytesReceived}`)
+
+    if(bytesSent !== bytesReceived){ //erase file
+      fs.unlinkSync(`${__dirname}/data/${fileName}/${req.headers['chunk-id']}`)
+      console.log('missing bytes')
+      res.statusCode = 408
+    }
+
+
+
     console.log('POST - Response Sent')
     res.end('POST - Response Sent')
   }
