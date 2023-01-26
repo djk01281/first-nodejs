@@ -15,7 +15,7 @@ async function getRandomImage(req, res, params){
         res.end(data)})
     }
 
-    catch(error){console.log(error)}
+    catch(error){res.end(error)}
 }
 
 module.exports = {getRandomImage}
