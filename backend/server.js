@@ -55,7 +55,7 @@ const server = http.createServer(async (req, res) => {
 
   for (const layer of layerList) {
     if (layer)
-    temp = temp[layer]
+      temp = temp[layer]
   }
 
   const method = req.method.toLocaleLowerCase()
