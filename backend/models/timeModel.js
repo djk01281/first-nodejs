@@ -1,5 +1,7 @@
 const path = require('path')
 const fs = require('fs')
+const { promisify } = require('util')
+const unlinkSync = promisify(fs.unlink)
 
 // const fileInfoById = async (searchId) => {
 //     const filePath = path.join(__dirname, '../data/fileInfo.json')
@@ -51,4 +53,36 @@ const emptyTimeHolder = async () => {
     fs.writeFileSync(holderPath, JSON.stringify({}))
 }
 
-module.exports = { saveTimeInfo, emptyTimeHolder }
+const expireTimeQueue = async () => {
+    console.log("expireTimeQueue running!")
+
+    const queuePath = path.join(__dirname, '../data/timeQueue.json')
+    const timeQueue = JSON.parse(fs.readFileSync(queuePath))
+
+    const times = Object.keys(timeQueue)
+    const now = Date.now()
+    while (times.length > 0) {
+        const time = times[0]
+        const passed = now - time
+        console.log(passed)
+        if (passed > 120000) {
+            console.log('been too long!!! getting expired')
+            times.shift()
+            const files = timeQueue[time]
+            for (const file of files) {
+                const fileName = file['fileName']
+                console.log(fileName)
+                const filePath = path.join(__dirname, '../data', `image${fileName}`)
+                delete timeQueue[JSON.stringify(time)]
+                await unlinkSync(filePath)
+            }
+        }
+        else {
+            break
+        }
+    }
+    await fs.writeFileSync(queuePath, JSON.stringify(timeQueue))
+}
+
+
+module.exports = { saveTimeInfo, emptyTimeHolder, expireTimeQueue }

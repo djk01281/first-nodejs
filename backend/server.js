@@ -7,10 +7,16 @@ const port = 3000;
 const { getRandomImage } = require("./controllers/imageController")
 const { uploadImage, finishUploadImage } = require('./controllers/uploadController');
 const { optionsController } = require("./controllers/optionsController");
-const { emptyTimeHolder } = require('./models/timeModel')
+const { emptyTimeHolder, expireTimeQueue } = require('./models/timeModel')
 
-emptyTimeHolder()
+// expireTimeQueue()
 
+const timeKeeper = async () => {
+  await emptyTimeHolder()
+  await expireTimeQueue()
+}
+setInterval(timeKeeper, 60000)
+timeKeeper()
 
 const routeTable = {
   "images": {

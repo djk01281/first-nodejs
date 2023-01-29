@@ -4,6 +4,7 @@ const { promisify } = require('util');
 const pipelineAsync = promisify(pipeline)
 const path = require('path');
 const readdirAsync = promisify(fs.readdir)
+const unlinkSync = promisify(fs.unlink)
 
 const saveImage = async (req) => {
     const uploadResult = "Upload Complete"
@@ -74,6 +75,7 @@ const mergeImage = async (fileName) => {
             await pipelineAsync(readST, writeST)
             console.log('CHUNKING finished', f)
         }
+        await unlinkSync(dirPath)
         console.log('Finished Upload')
         return ("Merging Finished")
     }

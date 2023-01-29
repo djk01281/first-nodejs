@@ -4,7 +4,7 @@
   "description": "first time using node JS",
   "main": "backend/server.js",
   "scripts": {
-    "dev": "nodemon --ignore 'backend/data/*.json' server.js"
+    "dev": "nodemon --ignore 'data/*.json' server.js"
   },
   "repository": {
     "type": "git",
