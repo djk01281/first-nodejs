@@ -75,7 +75,8 @@ const mergeImage = async (fileName) => {
             await pipelineAsync(readST, writeST)
             console.log('CHUNKING finished', f)
         }
-        await unlinkSync(dirPath)
+        console.log(dirPath)
+        await fs.rmSync(dirPath, { recursive: true, force: true })
         console.log('Finished Upload')
         return ("Merging Finished")
     }

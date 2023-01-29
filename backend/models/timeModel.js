@@ -69,13 +69,13 @@ const expireTimeQueue = async () => {
             console.log('been too long!!! getting expired')
             times.shift()
             const files = timeQueue[time]
-            for (const file of files) {
-                const fileName = file['fileName']
-                console.log(fileName)
-                const filePath = path.join(__dirname, '../data', `image${fileName}`)
-                delete timeQueue[JSON.stringify(time)]
-                await unlinkSync(filePath)
+            for(const file of files){
+            const fileName = file['fileName']
+            console.log(fileName)
+            const filePath = path.join(__dirname, '../data', `image${fileName}`)
+            await unlinkSync(filePath)
             }
+            delete timeQueue[time]
         }
         else {
             break
