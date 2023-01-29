@@ -6,8 +6,7 @@ const path = require('path');
 const { reset } = require('nodemon');
 const { saveImage, mergeImage } = require('../models/uploadModel')
 const { randomString } = require('../utils/randomString')
-const { saveFileInfo } = require('../models/fileModel');
-const { findById } = require('../models/imageModel');
+const { fileInfoById, saveFileInfo } = require('../models/fileModel');
 
 const uploadImage = async (req, res) => {
     const [uploadStatusCode, uploadResult] = await saveImage(req)
@@ -24,13 +23,18 @@ const finishUploadImage = async (req, res, params) => {
     const fileName = params[0]
     const mergeResult = await mergeImage(fileName)
 
-    const randomId = ""
-    while(await findById(randomId) !== undefined){
+    let randomId = ""
+    let result = 1
+    while (randomId === "" &&  result !== undefined) {
         randomId = ""
         randomId = randomString(10)
-    }   
+        result = await fileInfoById(randomId)
+    }
+    console.log(randomId)
 
     const uploadTime = Date.now()
+
+    console.log(uploadTime)
     saveFileInfo(randomId, fileName, uploadTime)
 
     res.end(mergeResult)

@@ -2,9 +2,10 @@ const path = require('path')
 const fs = require('fs')
 
 const fileInfoById = async (searchId) => {
-    const filePath = path.join(__dirname, '../data/fileInfo.js')
-    const fileInfo = fs.readFileSync(filePath)
-    for (const savedId of fileInfo) {
+    const filePath = path.join(__dirname, '../data/fileInfo.json')
+    const fileInfo = JSON.parse(fs.readFileSync(filePath))
+    const savedIds = Object.keys(fileInfo)
+    for (const savedId of savedIds) {
         if (savedId === searchId) {
             return (fileInfo[savedId])
         }
@@ -13,12 +14,15 @@ const fileInfoById = async (searchId) => {
 }
 
 const saveFileInfo = async (id, fileName, time) => {
-    const filePath = path.join(__dirname, '../data/fileInfo.js')
-    const fileInfo = fs.readFileSync(filePath)
+    const filePath = path.join(__dirname, '../data/fileInfo.json')
+    const fileInfo = JSON.parse(fs.readFileSync(filePath))
     fileInfo[id] = { "fileName": fileName, "time": time }
-    fs.writeFileSync(filePath, fileInfo)
 
-    console.log("Saved File Info")
+    console.log(fileInfo)
+
+    fs.writeFileSync(filePath, JSON.stringify(fileInfo))
+
+    console.log("Saved File Info!!")
 }
 
 module.exports = { fileInfoById, saveFileInfo }
