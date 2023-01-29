@@ -8,7 +8,7 @@ const { getRandomImage } = require("./controllers/imageController")
 const { uploadImage, finishUploadImage } = require('./controllers/uploadController');
 const { optionsController } = require("./controllers/optionsController");
 const { emptyTimeHolder, expireTimeQueue } = require('./models/timeModel')
-
+const { downloadController } = require("./controllers/downloadController")
 // expireTimeQueue()
 
 const timeKeeper = async () => {
@@ -28,6 +28,9 @@ const routeTable = {
     "post": uploadImage,
     "get": finishUploadImage,
     "options": optionsController
+  },
+  "download": {
+    "get": downloadController
   }
 }
 
@@ -71,8 +74,11 @@ const server = http.createServer(async (req, res) => {
 
   const method = req.method.toLocaleLowerCase()
   console.log(method)
+  let callback = () => console.log("Welcome Home")
 
-  const callback = temp[method]
+  if (layerList.length !== 0) {
+    callback = temp[method]
+  }
   console.log(callback)
   //get the parameters from URL if exists
   const keyValue = {}

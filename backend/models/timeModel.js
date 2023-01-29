@@ -1,6 +1,8 @@
 const path = require('path')
 const fs = require('fs')
 const { promisify } = require('util')
+
+const { deleteFile } = require('./fileModel')
 const unlinkSync = promisify(fs.unlink)
 
 // const fileInfoById = async (searchId) => {
@@ -65,17 +67,19 @@ const expireTimeQueue = async () => {
         const time = times[0]
         const passed = now - time
         console.log(passed)
-        if (passed > 120000) {
+        if (passed > 1200000) {
             console.log('been too long!!! getting expired')
             times.shift()
             const files = timeQueue[time]
-            for(const file of files){
-            const fileName = file['fileName']
-            console.log(fileName)
-            const filePath = path.join(__dirname, '../data', `image${fileName}`)
-            await unlinkSync(filePath)
+            for (const file of files) {
+                const fileName = file['fileName']
+                console.log(fileName)
+                const filePath = path.join(__dirname, '../data', `image${fileName}`)
+                await unlinkSync(filePath)
+
             }
             delete timeQueue[time]
+
         }
         else {
             break
