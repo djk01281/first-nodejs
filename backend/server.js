@@ -7,6 +7,9 @@ const port = 3000;
 const { getRandomImage } = require("./controllers/imageController")
 const { uploadImage, finishUploadImage } = require('./controllers/uploadController');
 const { optionsController } = require("./controllers/optionsController");
+const { emptyTimeHolder } = require('./models/timeModel')
+
+emptyTimeHolder()
 
 
 const routeTable = {
@@ -25,6 +28,8 @@ const routeTable = {
 const server = http.createServer(async (req, res) => {
 
   //capture path and parameters from URL
+
+
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Access-Control-Allow-Origin', '*');

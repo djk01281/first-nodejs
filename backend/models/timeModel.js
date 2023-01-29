@@ -35,4 +35,20 @@ const saveTimeInfo = async (id, fileName) => {
     console.log("Saved File Info!!")
 }
 
-module.exports = { saveTimeInfo }
+const emptyTimeHolder = async () => {
+    console.log("emptyTimeHolder running!")
+    const holderPath = path.join(__dirname, '../data/timeHolder.json')
+    const timeHolder = JSON.parse(fs.readFileSync(holderPath))
+
+    const queuePath = path.join(__dirname, '../data/timeQueue.json')
+    const timeQueue = JSON.parse(fs.readFileSync(queuePath))
+
+    const times = Object.keys(timeHolder)
+    for (const time of times) {
+        timeQueue[time] = timeHolder[time]
+    }
+    fs.writeFileSync(queuePath, JSON.stringify(timeQueue))
+    fs.writeFileSync(holderPath, JSON.stringify({}))
+}
+
+module.exports = { saveTimeInfo, emptyTimeHolder }
