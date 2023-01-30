@@ -14,6 +14,7 @@ const fileInfoById = async (searchId) => {
 
 const readFileById = async (id, res) => {
     const fileInfo = await fileInfoById(id)
+
     const fileName = fileInfo.fileName
     console.log(fileName)
     const filePath = path.join(__dirname, '../data', `image${fileName}`)
