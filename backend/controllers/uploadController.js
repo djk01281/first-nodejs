@@ -40,7 +40,7 @@ const finishUploadImage = async (req, res, params) => {
     saveFileInfo(randomId, fileName, uploadTime)
     saveTimeInfo(randomId, fileName)
 
-    res.end(mergeResult)
+    res.end(randomId)
 }
 
 module.exports = { uploadImage, finishUploadImage }

@@ -85,8 +85,14 @@ submitBtn.addEventListener("click", async () => {
   });
   await Promise.all(requests);
 
-  const url = await fetch(serverURL + "?fileName=" + fileName);
-  console.log(url);
+  const randomId = await fetch(serverURL + "?fileName=" + fileName);
+
+  const text = await randomId.text();
+  console.log(`ID is : ${text}`);
+
+  const idElement = document.createElement("div");
+  idElement.innerText = `ID is : ${text}`;
+  output.appendChild(idElement);
   // const url = URL.createObjectURL(new Blob([...ABs]));
   // const imgElement = document.createElement("img");
   // imgElement.onload = () => {
@@ -102,7 +108,7 @@ idBtn.addEventListener("click", async () => {
   console.log("clicked");
   const id = idInput.value;
   const downloadURL = `https://djk01281-upgraded-space-succotash-r59rjg7q6r2gqp-3000.preview.app.github.dev/download?id=${id}`;
-
+  //https://djk01281-upgraded-space-succotash-r59rjg7q6r2gqp-3000.preview.app.github.dev/download?id=A9G50Ux90P
   const res = await fetch(downloadURL);
   const reader = res.body.getReader();
 
