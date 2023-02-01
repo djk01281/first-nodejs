@@ -12,14 +12,14 @@ const fileInfoById = async (searchId) => {
     return fileInfo[searchId]
 }
 
-const readFileById = async (id, res) => {
+const readFileById = async (id, dest) => {
     const fileInfo = await fileInfoById(id)
 
     const fileName = fileInfo.fileName
     console.log(fileName)
     const filePath = path.join(__dirname, '../data', `image${fileName}`)
     const readST = fs.createReadStream(filePath)
-    await pipelineAsync(readST, res)
+    await pipelineAsync(readST, dest)
     console.log("writing complete")
 }
 

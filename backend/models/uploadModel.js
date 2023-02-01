@@ -6,6 +6,9 @@ const path = require('path');
 const readdirAsync = promisify(fs.readdir)
 const unlinkSync = promisify(fs.unlink)
 
+const AWS = require("aws-sdk")
+
+
 const saveImage = async (req) => {
     const uploadResult = "Upload Complete"
     const uploadStatusCode = 200
@@ -52,6 +55,22 @@ const saveImage = async (req) => {
 
 const mergeImage = async (fileName) => {
 
+    const bucketName = process.env.BUCKET_NAME
+    const bucketRegion = process.env.BUCKET_REIGION
+    const accessKey = process.env.ACCESS_KEY
+    const secretAccessKey = process.env.SECRET_ACCESS_KEY
+
+    console.log(bucketName)
+    const s3 = new AWS.S3(
+        {
+            credentials: {
+                accessKeyId: accessKey,
+                secretAccessKey: secretAccessKey
+            },
+            region: bucketRegion
+        }
+    )
+
     try {
         //create file for the whole image
         const dirPath = path.join(__dirname, '../data', fileName)
@@ -77,6 +96,23 @@ const mergeImage = async (fileName) => {
         }
         console.log(dirPath)
         await fs.rmSync(dirPath, { recursive: true, force: true })
+
+
+        console.log(bucketName)
+
+
+        const s3Result = await s3
+            .putObject({
+                Bucket: bucketName,
+                Key: fileName,
+                Body: "upload",
+            })
+            .promise()
+            .then(() => {
+                "uploaded to S3"
+            })
+            .catch((err) => { console.log(err) })
+
         console.log('Finished Upload')
         return ("Merging Finished")
     }

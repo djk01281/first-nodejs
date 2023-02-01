@@ -41,51 +41,61 @@ const saveTimeInfo = async (id, fileName) => {
 
 const emptyTimeHolder = async () => {
     console.log("emptyTimeHolder running!")
-    const holderPath = path.join(__dirname, '../data/timeHolder.json')
-    const timeHolder = JSON.parse(fs.readFileSync(holderPath))
+    try {
+        const holderPath = path.join(__dirname, '../data/timeHolder.json')
+        const timeHolder = JSON.parse(fs.readFileSync(holderPath))
 
-    const queuePath = path.join(__dirname, '../data/timeQueue.json')
-    const timeQueue = JSON.parse(fs.readFileSync(queuePath))
+        const queuePath = path.join(__dirname, '../data/timeQueue.json')
+        const timeQueue = JSON.parse(fs.readFileSync(queuePath))
 
-    const times = Object.keys(timeHolder)
-    for (const time of times) {
-        timeQueue[time] = timeHolder[time]
+        const times = Object.keys(timeHolder)
+        for (const time of times) {
+            timeQueue[time] = timeHolder[time]
+        }
+        fs.writeFileSync(queuePath, JSON.stringify(timeQueue))
+        fs.writeFileSync(holderPath, JSON.stringify({}))
     }
-    fs.writeFileSync(queuePath, JSON.stringify(timeQueue))
-    fs.writeFileSync(holderPath, JSON.stringify({}))
+    catch {
+        console.log("Error Emptying Time Holder")
+    }
 }
 
 const expireTimeQueue = async () => {
     console.log("expireTimeQueue running!")
 
-    const queuePath = path.join(__dirname, '../data/timeQueue.json')
-    const timeQueue = JSON.parse(fs.readFileSync(queuePath))
+    try {
+        const queuePath = path.join(__dirname, '../data/timeQueue.json')
+        const timeQueue = JSON.parse(fs.readFileSync(queuePath))
 
-    const times = Object.keys(timeQueue)
-    const now = Date.now()
-    while (times.length > 0) {
-        const time = times[0]
-        const passed = now - time
-        console.log(passed)
-        if (passed > 1200000) {
-            console.log('been too long!!! getting expired')
-            times.shift()
-            const files = timeQueue[time]
-            for (const file of files) {
-                const fileName = file['fileName']
-                console.log(fileName)
-                const filePath = path.join(__dirname, '../data', `image${fileName}`)
-                await unlinkSync(filePath)
+        const times = Object.keys(timeQueue)
+        const now = Date.now()
+        while (times.length > 0) {
+            const time = times[0]
+            const passed = now - time
+            console.log(passed)
+            if (passed > 1200000) {
+                console.log('been too long!!! getting expired')
+                times.shift()
+                const files = timeQueue[time]
+                for (const file of files) {
+                    const fileName = file['fileName']
+                    console.log(fileName)
+                    const filePath = path.join(__dirname, '../data', `image${fileName}`)
+                    await unlinkSync(filePath)
+
+                }
+                delete timeQueue[time]
 
             }
-            delete timeQueue[time]
-
+            else {
+                break
+            }
         }
-        else {
-            break
-        }
+        await fs.writeFileSync(queuePath, JSON.stringify(timeQueue))
     }
-    await fs.writeFileSync(queuePath, JSON.stringify(timeQueue))
+    catch {
+        console.log("Error Deleting Expired Files")
+    }
 }
 
 

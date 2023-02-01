@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/djk01281/first-nodejs#readme",
   "dependencies": {
+    "aws-sdk": "^2.1306.0",
+    "dotenv": "^16.0.3",
     "node-fetch": "^3.3.0"
   },
   "devDependencies": {

@@ -12,7 +12,7 @@ const { saveTimeInfo } = require('../models/timeModel')
 
 const uploadImage = async (req, res) => {
     const [uploadStatusCode, uploadResult] = await saveImage(req)
-
+    console.log("writing chunk finished")
     res.statusCode = uploadStatusCode
     res.end(uploadResult)
 }
@@ -22,6 +22,7 @@ const finishUploadImage = async (req, res, params) => {
     //`req` : request from client, signalling every chunk being sent
     // `req.url` : /upload/imageID
 
+    console.log("Calling Finish Upload Image")
     const fileName = params[0]
     const mergeResult = await mergeImage(fileName)
 

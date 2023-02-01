@@ -46,14 +46,12 @@ const resendImage = async (url, chunk, chunkId, fileName, retries) => {
       },
       body: chunk
     });
-    // if (response.ok !== true && retries > 0) {
-    //   console.log("Retrying");
-    //   resendImage(url, chunk, chunkId, fileName, retries - 1);
-    // } else {
-    //   resolve(response);
-    // }
-    console.log(response.ok);
-    resolve(response);
+    if (response.ok !== true && retries > 0) {
+      console.log("Retrying, Retries: ", 4 - retries);
+      resendImage(url, chunk, chunkId, fileName, retries - 1);
+    } else {
+      resolve(response);
+    }
   });
 };
 
@@ -62,7 +60,7 @@ submitBtn.addEventListener("click", async () => {
   const imgAB = await selectedFile.arrayBuffer();
   const fileName = new Date().getTime() + selectedFile.name;
   console.log(fileName);
-  const CHUNK_SIZE = 4000;
+  const CHUNK_SIZE = 10000;
   const chunkCount = Math.floor(imgAB.byteLength / CHUNK_SIZE) + 1;
   console.log(chunkCount);
 
@@ -80,7 +78,7 @@ submitBtn.addEventListener("click", async () => {
     const chunk = await imgAB.slice(
       chunkId * CHUNK_SIZE,
       (chunkId + 1) * CHUNK_SIZE
-    );
+    );`
     const request = await resendImage(serverURL, chunk, chunkId, fileName, 3);
   });
   await Promise.all(requests);
@@ -94,7 +92,7 @@ submitBtn.addEventListener("click", async () => {
   idElement.innerText = `ID is : ${text}`;
   output.appendChild(idElement);
   // const url = URL.createObjectURL(new Blob([...ABs]));
-  // const imgElement = document.createElement("img");
+  // const imgElement = document.createElement("img");`
   // imgElement.onload = () => {
   //   output.appendChild(imgElement);
   // };

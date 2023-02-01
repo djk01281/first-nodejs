@@ -11,6 +11,10 @@ const { emptyTimeHolder, expireTimeQueue } = require('./models/timeModel')
 const { downloadController } = require("./controllers/downloadController")
 // expireTimeQueue()
 
+const dotenv = require("dotenv")
+dotenv.config({ path: '.env' })
+
+
 const timeKeeper = async () => {
   await emptyTimeHolder()
   await expireTimeQueue()
